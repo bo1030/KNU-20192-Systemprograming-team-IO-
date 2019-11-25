@@ -2,6 +2,10 @@
 
 int main(int ac, char *av[])
 {
-	rename(av[1], av[2]);
+	do_rename(av[1], av[2]);
 }
 
+void do_rename(char * name, char *change)
+{
+	rename(name, change);
+}
