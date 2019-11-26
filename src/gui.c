@@ -4,25 +4,41 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <termio.h>
+#include <ctype.h>
 
-void underdock();
-void menu();
+void underdock(char **, int);
+void menu(char ***);
 void center_left(char *);
 void center_right(char *);
 void ls(char *);
 void do_ls(char[]);
 void dostat(char *);
 void show_file_info(char *, struct stat *);
+void set_crmode(int);
+void set_echomode(char mode);
+void tty_mode(int);
+
 
 int main(void)
 {
-	char list[][];	
-	ls(
+	char underlist[][] = {"1. 복사", "2. 붙여넣기", "3. 잘라내기", "4. 이름바꾸기", "5. 공유"};
+	initscr();
+	clear();
+
+	underdock(underlist, 5)
+
 }
 
-void underdock(char * under)
+void underdock(char ** under, int size)
 {
-
+	move(LINES - 1, 0);
+	for (int i = 0; i < size; i++)
+	{
+		addstr(under[i]);
+		addstr(" ");
+		refresh();
+	}
 }
 
 void menu(char* menu)
@@ -68,4 +84,42 @@ void show_file_info(char *filename, struct stat *info_p)
 	printf("%8ld ", (long)info_p->st_size);
 	printf("%.12s ", 4 + ctime(&info_p->st_mtime));
 	printf("%s\n", filename);
+}
+
+
+void set_crmode(int mode)
+{
+	struct termios ttystate;
+
+	tcgetattr(0, &ttystate);
+	if (mode == 0)
+		ttystate.c_lflag &= ~ICANON;
+	else
+		ttystate.c_lflag |= ICANON;
+	ttystate.c_cc[VMIN] = 1;
+
+	tcsetattr(0, TCSANOW, &ttystate);
+}
+
+void set_echomode(char mode)
+{
+	struct termios ttystate;
+
+	tcgetattr(0, &ttystate);
+	if (mode == '2')
+		ttystate.c_lflag &= ~ECHO;
+	else
+		ttystate.c_lflag |= ECHO;
+	ttystate.c_cc[VMIN] = 1;
+
+	tcsetattr(0, TCSANOW, &ttystate);
+}
+
+void tty_mode(int how)
+{
+	static struct termios original_mode;
+	if (how == 0)
+		tcgetattr(0, &original_mode);
+	else
+		tcsetattr(0, TCSANOW, &original_mode);
 }
