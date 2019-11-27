@@ -8,9 +8,7 @@
 #include <ctype.h>
 
 void underdock(char **, int);
-void menu(char ***);
 void center_left(char *);
-void center_right(char *);
 void ls(char *);
 void do_ls(char[]);
 void dostat(char *);
@@ -19,14 +17,21 @@ void set_crmode(int);
 void set_echomode(char mode);
 void tty_mode(int);
 
+int pos;
 
 int main(void)
 {
 	char underlist[][] = {"1. 복사", "2. 붙여넣기", "3. 잘라내기", "4. 이름바꾸기", "5. 공유"};
+	char path[] = ".";
+	int menu;
 	initscr();
 	clear();
-
-	underdock(underlist, 5)
+	while (1)
+	{
+		underdock(underlist, 5);
+		center_left(path);
+		menu = getchar()
+	}
 
 }
 
@@ -41,16 +46,15 @@ void underdock(char ** under, int size)
 	}
 }
 
-void menu(char* menu)
-{
-}
-
 void center_left(char *list)
 {
-}
-
-void center_left(char *list)
-{
+	move(0, 0);
+	addstr("name	  ");
+	addstr("size	  ");
+	addstr("moditime");
+	pos = 1;
+	move(pos, 0);
+	ls(list);
 }
 
 void do_ls(char dirname[])
@@ -81,9 +85,12 @@ void show_file_info(char *filename, struct stat *info_p)
 {
 	char *ctime();
 
-	printf("%8ld ", (long)info_p->st_size);
-	printf("%.12s ", 4 + ctime(&info_p->st_mtime));
-	printf("%s\n", filename);
+	addstr(filename);
+	addstr("	");
+	addstr((long)info_p->st_size);
+	addstr("	");
+	addstr(4 + ctime(&info_p->st_mtime));
+	move(++pos, 0);
 }
 
 
