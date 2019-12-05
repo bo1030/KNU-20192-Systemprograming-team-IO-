@@ -17,11 +17,31 @@ void set_crmode(int);
 void set_echomode(char mode);
 void tty_mode(int);
 
-int pos;
+struct cur_info{
+	int col_pos;
+	int row_pos;
+	char sel[100][100];
+}
+
+struct file_info{
+	char name[100];
+	char size[10];
+	char moditime[20];
+}
+
+struct scroll{
+	int up=1;
+	int down=LINES -2;
+}
+
+struct cur_info cur;
+struct file_info file[100];
+struct scroll sc;
+int size = 0;
 
 int main(void)
 {
-	char underlist[][] = {"1. 복사", "2. 붙여넣기", "3. 잘라내기", "4. 이름바꾸기", "5. 공유"};
+	char underlist[][] = {"1. copy", "2. paste", "3. move", "4. rename", "5. sel", "6. quit"};
 	char path[] = ".";
 	int menu;
 	initscr();
@@ -30,7 +50,23 @@ int main(void)
 	{
 		underdock(underlist, 5);
 		center_left(path);
-		menu = getchar()
+		refresh();
+		menu = getchar();
+		
+		switch(menu)
+		{
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 6:
+				break;
+			case 6:
+				return;
 	}
 
 }
@@ -42,7 +78,6 @@ void underdock(char ** under, int size)
 	{
 		addstr(under[i]);
 		addstr(" ");
-		refresh();
 	}
 }
 
@@ -84,10 +119,12 @@ void dostat(char *filename)
 void show_file_info(char *filename, struct stat *info_p)
 {
 	char *ctime();
+	file[]
+	
 
 	addstr(filename);
 	addstr("	");
-	addstr((long)info_p->st_size);
+	addstr();
 	addstr("	");
 	addstr(4 + ctime(&info_p->st_mtime));
 	move(++pos, 0);
