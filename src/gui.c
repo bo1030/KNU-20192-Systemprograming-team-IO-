@@ -16,6 +16,9 @@ void show_file_info(char *, struct stat *);
 void set_crmode(int);
 void set_echomode(char mode);
 void tty_mode(int);
+int isDir(char *);
+void exc(char *);
+
 
 struct cur_info{
 	int col_pos;
@@ -46,6 +49,8 @@ int main(void)
 	int menu;
 	initscr();
 	clear();
+	cur.col_pos = 0;
+	cur.row_pos = 1;
 	while (1)
 	{
 		underdock(underlist, 5);
@@ -55,18 +60,23 @@ int main(void)
 		
 		switch(menu)
 		{
-			case 1:
+			case '1':
+
 				break;
-			case 2:
+			case '2':
 				break;
-			case 3:
+			case '3':
 				break;
-			case 4:
+			case '4':
 				break;
-			case 6:
+			case '5':
 				break;
-			case 6:
+			case '6':
 				return;
+			case '\n':
+
+				break;
+
 	}
 
 }
