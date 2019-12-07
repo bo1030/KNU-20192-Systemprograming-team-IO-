@@ -45,51 +45,76 @@ int change = 1;
 
 int main(void)
 {
-	char underlist[][] = {"1. copy", "2. paste", "3. move", "4. rename", "5. quit"};
+	char underlist[][] = {"1. sel", "2. paste", "3. move", "4. rename", "5. quit", "6. give", "7. get"};
 	char path[] = ".";
 	int menu;
 	char temp[100];
+
+	tty_mode(0);
 	initscr();
 	clear();
-	cur.col_pos = 0;
-	cur.row_pos = 1;
 	while (1)
 	{
 		if(change == 1)
+		{
+			fsize = 0;
 			ls(path);
+			change = 0;
+			cur.col_pos = 0;
+			cur.row_pos = 1;
+		}
+		clear();
 		underdock(underlist, 5);
 		center_left();
+		move(cur.row_pos, cur.col_pos);
+		addstr("*");
 		refresh();
 		menu = getchar();
 		
 		switch(menu)
 		{
 			case '1':
-				strcpy(cur.sel, ifile[cur.row_pos-1].name);
+				getcwd(temp, 100);
+				strcat(temp, ifile[cur.row_pos-1].name)
+				strcpy(cur.sel[selected++], temp);
 				break;
 			case '2':
 				for(int i = 0; i < selected; i++)
 				{
-					copy()
+					getcwd(temp, 100);
+					copy(sel[i], temp);
 				}
 				break;
 			case '3':
-
+				move(LINE-2, 0);
+				addstr("target dir: ");
+				scanf("%s", temp);
+				move(LINE-2, 0);
+				addstr("rename: ");
+				scanf("%s", temp);
+				do_rename(ifile[cur.row_pos-1], temp);
+				addstr("							");
+				move(cur.row_pos, cur.col_pos);
+				change = 1;
 				break;
 			case '4':
 				move(LINE-2, 0);
 				addstr("rename: ");
 				scanf("%s", temp);
 				do_rename(ifile[cur.row_pos-1], temp);
+				addstr("							");
 				move(cur.row_pos, cur.col_pos);
-				refresh;
+				change = 1;
 				break;
 			case '5':
+				tty_mode(1);
 				return;
 			case '\n':
 				if(isDir == 1)
 				{
 					chdir(ifile[cur.row_pos-1].name);
+					strncpy(path, ifile[cur.row_pos-1].name, strlen(ifile[cur.row_pos-1].name));
+					change = 1;
 				}
 				else
 				{
@@ -105,6 +130,7 @@ int main(void)
 						cur.row_pos--;
 						break;
 					case 75:
+						if(cur.row_pos )
 						cur.row_pos++;
 						break;
 					case 77:
@@ -131,7 +157,7 @@ void underdock(char ** under, int fsize)
 
 void center_left()
 {
-	move(0, 0);
+	move(0, 2);
 	addstr("name	  ");
 	addstr("fsize	  ");
 	addstr("moditime");
@@ -222,4 +248,3 @@ void tty_mode(int how)
 	else
 		tcsetattr(0, TCSANOW, &original_mode);
 }
-
