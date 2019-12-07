@@ -6,6 +6,7 @@
 #include <string.h>
 #include <termio.h>
 #include <ctype.h>
+#include <unistd.h>
 
 void underdock(char **, int);
 void center_left();
@@ -17,8 +18,6 @@ void set_crmode(int);
 void set_echomode(char mode);
 void tty_mode(int);
 int isDir(char *);
-void exc(char *);
-
 
 struct cur_info{
 	int col_pos;
@@ -34,20 +33,22 @@ struct file_info{
 
 struct scroll{
 	int up=1;
-	int down=LINES -2;
+	int down=LINES -3;
 }
 
 struct cur_info cur;
 struct file_info ifile[100];
 struct scroll sc;
 int fsize = 0;
+int selected = 0;
 int change = 1;
 
 int main(void)
 {
-	char underlist[][] = {"1. copy", "2. paste", "3. move", "4. rename", "5. sel", "6. quit"};
+	char underlist[][] = {"1. copy", "2. paste", "3. move", "4. rename", "5. quit"};
 	char path[] = ".";
 	int menu;
+	char temp[100];
 	initscr();
 	clear();
 	cur.col_pos = 0;
@@ -64,18 +65,36 @@ int main(void)
 		switch(menu)
 		{
 			case '1':
+				strcpy(cur.sel, ifile[cur.row_pos-1].name);
 				break;
 			case '2':
+				for(int i = 0; i < selected; i++)
+				{
+					copy()
+				}
 				break;
 			case '3':
+
 				break;
 			case '4':
+				move(LINE-2, 0);
+				addstr("rename: ");
+				scanf("%s", temp);
+				do_rename(ifile[cur.row_pos-1], temp);
+				move(cur.row_pos, cur.col_pos);
+				refresh;
 				break;
 			case '5':
-				break;
-			case '6':
 				return;
 			case '\n':
+				if(isDir == 1)
+				{
+					chdir(ifile[cur.row_pos-1].name);
+				}
+				else
+				{
+					exec(ifile[cur.row_pos-1].name);
+				}
 				break;
 	
 			case 224:
@@ -83,24 +102,26 @@ int main(void)
 				switch(menu)
 				{
 					case 72:
+						cur.row_pos--;
 						break;
 					case 75:
+						cur.row_pos++;
 						break;
 					case 77:
+						cur.col_pos--;
 						break;
 					case 80:
+						cur.col_pos++;
 						break;
 				}
 			break;
-
-
 	}
 
 }
 
 void underdock(char ** under, int fsize)
 {
-	move(LINES - 1, 0);
+	move(LINES - 2, 0);
 	for (int i = 0; i < fsize; i++)
 	{
 		addstr(under[i]);
@@ -165,7 +186,6 @@ void save_info(char *filename, struct stat *info_p)
 	strcpy(ifile[fsize].name, 4 + ctime(&info_p->st_mtime));
 }
 
-
 void set_crmode(int mode)
 {
 	struct termios ttystate;
@@ -202,3 +222,4 @@ void tty_mode(int how)
 	else
 		tcsetattr(0, TCSANOW, &original_mode);
 }
+
