@@ -8,11 +8,11 @@
 #include <ctype.h>
 
 void underdock(char **, int);
-void center_left(char *);
+void center_left();
 void ls(char *);
 void do_ls(char[]);
 void dostat(char *);
-void show_file_info(char *, struct stat *);
+void save_info(char *, struct stat *);
 void set_crmode(int);
 void set_echomode(char mode);
 void tty_mode(int);
@@ -28,7 +28,7 @@ struct cur_info{
 
 struct file_info{
 	char name[100];
-	char size[10];
+	char fsize[10];
 	char moditime[20];
 }
 
@@ -38,9 +38,10 @@ struct scroll{
 }
 
 struct cur_info cur;
-struct file_info file[100];
+struct file_info ifile[100];
 struct scroll sc;
-int size = 0;
+int fsize = 0;
+int change = 1;
 
 int main(void)
 {
@@ -53,15 +54,16 @@ int main(void)
 	cur.row_pos = 1;
 	while (1)
 	{
+		if(change == 1)
+			ls(path);
 		underdock(underlist, 5);
-		center_left(path);
+		center_left();
 		refresh();
 		menu = getchar();
 		
 		switch(menu)
 		{
 			case '1':
-
 				break;
 			case '2':
 				break;
@@ -74,32 +76,57 @@ int main(void)
 			case '6':
 				return;
 			case '\n':
-
 				break;
+	
+			case 224:
+				menu = getchar();
+				switch(menu)
+				{
+					case 72:
+						break;
+					case 75:
+						break;
+					case 77:
+						break;
+					case 80:
+						break;
+				}
+			break;
+
 
 	}
 
 }
 
-void underdock(char ** under, int size)
+void underdock(char ** under, int fsize)
 {
 	move(LINES - 1, 0);
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < fsize; i++)
 	{
 		addstr(under[i]);
 		addstr(" ");
 	}
 }
 
-void center_left(char *list)
+void center_left()
 {
 	move(0, 0);
 	addstr("name	  ");
-	addstr("size	  ");
+	addstr("fsize	  ");
 	addstr("moditime");
 	pos = 1;
 	move(pos, 0);
-	ls(list);
+	
+	for(int i = sc.up; i < sc.down; i++)
+	{
+		if(i == fsize)
+			break;
+		addstr(ifile[i].name);
+		addstr("	");
+		addstr(ifile[i].fsize);
+		addstr("	");
+		addstr(ifile[i].moditime);
+	}
 }
 
 void do_ls(char dirname[])
@@ -123,21 +150,19 @@ void dostat(char *filename)
 	if (stat(filename, &info) == -1)
 		perror(filename);
 	else
-		show_file_info(filename, &info);
+	{
+	 	save_info(filename, &info);
+		fsize++;
+	}
 }
 
-void show_file_info(char *filename, struct stat *info_p)
+void save_info(char *filename, struct stat *info_p)
 {
 	char *ctime();
-	file[]
-	
 
-	addstr(filename);
-	addstr("	");
-	addstr();
-	addstr("	");
-	addstr(4 + ctime(&info_p->st_mtime));
-	move(++pos, 0);
+	strcpy(ifile[fsize].name, filename);
+	itoa(info_p->st_size, ifile[fsize].fsize, 10);
+	strcpy(ifile[fsize].name, 4 + ctime(&info_p->st_mtime));
 }
 
 
