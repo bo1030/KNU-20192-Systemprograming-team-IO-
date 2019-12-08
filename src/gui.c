@@ -17,7 +17,7 @@ void save_info(char *, struct stat *);
 void set_crmode(int);
 void set_echomode(int);
 void tty_mode(int);
-//int isDir(char *);
+int isDir(char *);
 
 struct cur_info{
 	int col_pos;
@@ -194,7 +194,7 @@ void center_left()
 	}
 }
 
-void do_ls(char dirname[])
+void do_ls(char * dirname)
 {
 	DIR *dir_ptr;
 	struct dirent *direntp;
@@ -265,4 +265,19 @@ void tty_mode(int how)
 		tcgetattr(0, &original_mode);
 	else
 		tcsetattr(0, TCSANOW, &original_mode);
+}
+
+int isDir(char * fname)
+{
+		struct stat info;
+
+	if (stat(filename, &info) == -1)
+		perror(filename);
+	else
+	{
+		if(S_ISDIR(info.st_mode))
+			return 1;
+		else
+			return 0;
+	}
 }
