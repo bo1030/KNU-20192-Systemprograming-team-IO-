@@ -23,18 +23,18 @@ struct cur_info{
 	int col_pos;
 	int row_pos;
 	char sel[100][100];
-}
+};
 
 struct file_info{
 	char name[100];
 	char fsize[10];
 	char moditime[20];
-}
+};
 
 struct scroll{
 	int up=1;
 	int down=LINES -3;
-}
+};
 
 struct cur_info cur;
 struct file_info ifile[100];
