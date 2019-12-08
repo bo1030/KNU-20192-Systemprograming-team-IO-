@@ -11,14 +11,13 @@
 
 void underdock(char **, int);
 void center_left();
-void ls(char *);
 void do_ls(char*);
 void dostat(char *);
 void save_info(char *, struct stat *);
 void set_crmode(int);
 void set_echomode(int);
 void tty_mode(int);
-int isDir(char *);
+//int isDir(char *);
 
 struct cur_info{
 	int col_pos;
@@ -61,7 +60,7 @@ int main(void)
 		if(change == 1)
 		{
 			fsize = 0;
-			ls(path);
+			do_ls(path);
 			change = 0;
 			cur.col_pos = 0;
 			cur.row_pos = 1;
@@ -227,7 +226,7 @@ void save_info(char *filename, struct stat *info_p)
 	char *ctime();
 
 	strcpy(ifile[fsize].name, filename);
-	itoa(info_p->st_size, ifile[fsize].fsize, 10);
+	ltoa(info_p->st_size, ifile[fsize].fsize, 10);
 	strcpy(ifile[fsize].name, 4 + ctime(&info_p->st_mtime));
 }
 
