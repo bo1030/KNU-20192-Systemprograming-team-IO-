@@ -36,7 +36,7 @@ struct scroll_pos{
 	int down;
 };
 
-char underlist[7][20] = {"1. sel\0", "2. paste\0", "3. move\0", "4. rename\0", "5. quit\0", "6. give\0", "7. get\0"};
+char underlist[8][20] = {"1. sel\0", "2. paste\0", "3. move\0", "4. rename\0","5. remove", "6. quit\0", "7. give\0", "8. get\0"};
 struct cur_info cur;
 struct file_info ifile[100];
 struct scroll_pos sc;
@@ -48,7 +48,7 @@ int main(void)
 {
 	char path[100] = ".";
 	int menu;
-	int i;
+	int newpid;
 	char temp[100];
 
 	set_crmode(0);
@@ -90,6 +90,7 @@ int main(void)
 					copy(cur.sel_dir[i], temp, cur.sel[i]);
 				}
 				selected = 0;
+				change = 1;
 				break;
 			case '3':
 				endwin();
@@ -120,6 +121,10 @@ int main(void)
 				change = 1;
 				break;
 			case '5':
+				remove(ifile[cur.row_pos-1].name);
+				change = 1;
+				break;
+			case '6':
 				endwin();
 				set_crmode(1);
                                 set_echomode(1);
@@ -136,8 +141,18 @@ int main(void)
 				}
 				else
 				{
+					endwin();
+                                	set_crmode(1);
+                                	set_echomode(1);
 					strcat(ifile[cur.row_pos-1].name,"\0");
-					exec(ifile[cur.row_pos-1].name);
+					exec(ifile[cur.row_pos-1].name, &newpid);
+					if(newpid == 0)
+						return 0;
+					endwin();
+                                	init();
+                               		set_crmode(0);
+                                	set_echomode(2);
+					change = 1;
 				}
 				break;
 	

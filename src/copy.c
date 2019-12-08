@@ -45,7 +45,7 @@ void copy(char * dirname, char * targetname, char *fname)
 				if(S_ISDIR(info))
 				{
 					mkdir(out_name, info);
-					copy(in_name, out_name,in_name);
+					copy(in_name, out_name, in_name);
 					continue;
 				}
 

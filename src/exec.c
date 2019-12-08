@@ -4,19 +4,21 @@
 #include <unistd.h>
 #include <string.h>
 
-int exec(char* fname)
+int exec(char* fname, int * newpid)
 {
-    int newpid;
-    char array[3][100]={0};
-
+    char *array[3];
+    array[0] = (char *)malloc(4);	    
+    array[1] = (char *)malloc(strlen(fname)+1);
+    array[2] = 0;    
     strcpy(array[0], "vim");
     strcpy(array[1], fname);
-    if((newpid = fork())==-1)
+    if((*newpid = fork())==-1)
         perror("fork");
-    else if(newpid == 0)
+    else if(*newpid == 0)
     {
-        execvp("vim", array);
+       if( execvp("vim", array)==-1)
+	       perror("execvp");
     }
     else
-        wait(newpid);
+        wait(NULL);
 }
