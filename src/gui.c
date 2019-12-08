@@ -46,7 +46,7 @@ int change = 1;
 
 int main(void)
 {
-	char underlist[][] = {"1. sel", "2. paste", "3. move", "4. rename", "5. quit", "6. give", "7. get"};
+	char underlist[7][20] = {"1. sel", "2. paste", "3. move", "4. rename", "5. quit", "6. give", "7. get"};
 	char path[] = ".";
 	int menu;
 	char temp[100];
@@ -80,7 +80,7 @@ int main(void)
 		{
 			case '1':
 				getcwd(temp, 100);
-				strcat(temp, ifile[cur.row_pos-1].name)
+				strcat(temp, ifile[cur.row_pos-1].name);
 				strcpy(cur.sel[selected++], temp);
 				break;
 			case '2':
@@ -166,7 +166,7 @@ int main(void)
 
 void underdock(char ** under, int fsize)
 {
-	move(LINESS - 2, 0);
+	move(LINES - 2, 0);
 	for (int i = 0; i < fsize; i++)
 	{
 		addstr(under[i]);
