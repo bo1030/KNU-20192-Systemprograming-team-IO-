@@ -39,8 +39,6 @@ struct scroll_pos{
 struct cur_info cur;
 struct file_info ifile[100];
 struct scroll_pos sc;
-sc.up = 1;
-sc.down = LINE -3;
 int fsize = 0;
 int selected = 0;
 int change = 1;
@@ -66,13 +64,13 @@ int main(void)
 			change = 0;
 			cur.col_pos = 0;
 			cur.row_pos = 1;
-			sc.down = LINES -3;
+			sc.down = LINE -3;
 			sc.up = 1;
 		}
 		clear();
 		underdock(underlist, 5);
 		center_left();
-		move(cur.row_pos, 0;
+		move(cur.row_pos, 0);
 		addstr("*");
 		refresh();
 		menu = getchar();
@@ -181,8 +179,7 @@ void center_left()
 	addstr("name	  ");
 	addstr("fsize	  ");
 	addstr("moditime");
-	pos = 1;
-	move(pos, 0);
+	move(1, 2);
 	
 	for(int i = sc.up; i < sc.down; i++)
 	{
