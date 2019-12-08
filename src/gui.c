@@ -11,11 +11,11 @@
 void underdock(char **, int);
 void center_left();
 void ls(char *);
-void do_ls(char[]);
+void do_ls(char*);
 void dostat(char *);
 void save_info(char *, struct stat *);
 void set_crmode(int);
-void set_echomode(char mode);
+void set_echomode(int);
 void tty_mode(int);
 int isDir(char *);
 
@@ -31,16 +31,16 @@ struct file_info{
 	char moditime[20];
 };
 
-struct scroll{
+struct scroll_pos{
 	int up;
 	int down;
 };
 
 struct cur_info cur;
 struct file_info ifile[100];
-struct scroll sc;
+struct scroll_pos sc;
 sc.up = 1;
-sc.down = LINE - 3;
+sc.down = LINE -3;
 int fsize = 0;
 int selected = 0;
 int change = 1;
@@ -246,12 +246,12 @@ void set_crmode(int mode)
 	tcsetattr(0, TCSANOW, &ttystate);
 }
 
-void set_echomode(char mode)
+void set_echomode(int mode)
 {
 	struct termios ttystate;
 
 	tcgetattr(0, &ttystate);
-	if (mode == '2')
+	if (mode == 2)
 		ttystate.c_lflag &= ~ECHO;
 	else
 		ttystate.c_lflag |= ECHO;
