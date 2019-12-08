@@ -32,13 +32,15 @@ struct file_info{
 };
 
 struct scroll{
-	int up=1;
-	int down=LINES -3;
+	int up;
+	int down;
 };
 
 struct cur_info cur;
 struct file_info ifile[100];
 struct scroll sc;
+sc.up = 1;
+sc.down = LINE - 3;
 int fsize = 0;
 int selected = 0;
 int change = 1;
