@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <curses.h>
 
-void underdock(char **, int);
+void underdock();
 void center_left();
 void do_ls(char*);
 void dostat(char *);
@@ -36,6 +36,7 @@ struct scroll_pos{
 	int down;
 };
 
+char underlist[7][20] = {"1. sel\0", "2. paste\0", "3. move\0", "4. rename\0", "5. quit\0", "6. give\0", "7. get\0"};
 struct cur_info cur;
 struct file_info ifile[100];
 struct scroll_pos sc;
@@ -45,7 +46,6 @@ int change = 1;
 
 int main(void)
 {
-	char underlist[7][20] = {"1. sel", "2. paste", "3. move", "4. rename", "5. quit", "6. give", "7. get"};
 	char path[] = ".";
 	int menu;
 	char temp[100];
@@ -54,7 +54,6 @@ int main(void)
 	set_crmode(0);
 	set_echomode(2);
 	init();
-
 	while (1)
 	{
 		if(change == 1)
@@ -68,12 +67,13 @@ int main(void)
 			sc.up = 1;
 		}
 		clear();
-		underdock(underlist, 5);
+		underdock();
+		refresh();
 		center_left();
 		move(cur.row_pos, 0);
 		addstr("*");
 		refresh();
-		menu = getchar();
+		menu = getch();
 		
 		switch(menu)
 		{
@@ -132,7 +132,7 @@ int main(void)
 				break;
 	
 			case 224:
-				menu = getchar();
+				menu = getch();
 				switch(menu)
 				{
 					case 72:
@@ -164,12 +164,12 @@ int main(void)
 
 }
 
-void underdock(char ** under, int fsize)
+void underdock()
 {
 	move(LINES - 2, 0);
 	for (int i = 0; i < fsize; i++)
 	{
-		addstr(under[i]);
+		addstr(underlist[i]);
 		addstr(" ");
 	}
 }
@@ -182,14 +182,14 @@ void center_left()
 	addstr("moditime");
 	move(1, 2);
 	
-	for(int i = sc.up; i < sc.down; i++)
+	for(int i = sc.up-1; i <= sc.down; i++)
 	{
 		if(i == fsize)
 			break;
 		addstr(ifile[i].name);
 		addstr("	");
 		addstr(ifile[i].fsize);
-		addstr("	");
+		addstr("	  ");
 		addstr(ifile[i].moditime);
 	}
 }

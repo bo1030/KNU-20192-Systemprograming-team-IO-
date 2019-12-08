@@ -4,5 +4,4 @@ void init()
 {
     initscr();
     clear();
-    refresh();
 }
