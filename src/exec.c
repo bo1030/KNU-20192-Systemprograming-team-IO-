@@ -7,11 +7,10 @@
 int exec(char* fname)
 {
     int newpid;
-    char array[3][100];
+    char array[3][100]={0};
 
     strcpy(array[0], "vim");
     strcpy(array[1], fname);
-    strcpy(array[2], 0);
     if((newpid = fork())==-1)
         perror("fork");
     else if(newpid == 0)

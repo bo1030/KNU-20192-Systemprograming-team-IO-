@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <dirent.h>
-#include <sys/stat.h>₩
+#include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
@@ -45,7 +45,7 @@ void copy(char * dirname, char * targetname, char *fname)
 				if(S_ISDIR(info))
 				{
 					mkdir(out_name, info);
-					copy(in_name, out_name);
+					copy(in_name, out_name,in_name);
 					continue;
 				}
 
