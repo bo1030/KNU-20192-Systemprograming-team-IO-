@@ -127,7 +127,10 @@ int main(void)
 			case '\n':
 				if(isDir(ifile[cur.row_pos-1].name) == 1)
 				{
-					chdir(ifile[cur.row_pos-1].name);
+					getcwd(temp, 100);
+					strcat(temp, "/");
+					strcat(temp, ifile[cur.row_pos-1].name);
+					chdir(temp);
 					strncpy(path, ifile[cur.row_pos-1].name, strlen(ifile[cur.row_pos-1].name));		
 					change = 1;
 				}
