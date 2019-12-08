@@ -7,12 +7,12 @@
 #include <string.h>
 #define BUFFERSIZE 4096
 
-void copy(char *, char *);
+void copy(char *, char *, char *);
 int mode(char *);
 int is_read(int);
 char* exist(char*, char *);
 
-void copy(char * dirname, char * targetname)
+void copy(char * dirname, char * targetname, char *fname)
 {
 	DIR *dir_ptr;
 	struct dirent *direntp;
@@ -73,14 +73,13 @@ void copy(char * dirname, char * targetname)
 	}
 	else
 	{
-		struct stat info;
 		stat(dirname, &info);
 		strcpy(in_name, dirname);
                 strcpy(out_name, targetname);
 
 
                 strcat(out_name, "/");
-                strcat(out_name, info.st);
+                strcat(out_name, fname);
 
                 info = mode(in_name);
 

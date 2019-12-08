@@ -21,6 +21,7 @@ int isDir(char *);
 struct cur_info{
 	int col_pos;
 	int row_pos;
+	char sel_dir[100][100];
 	char sel[100][100];
 };
 
@@ -76,16 +77,17 @@ int main(void)
 		switch(menu)
 		{
 			case '1':
+				strcpy(cur.sel[selected], ifile[cur.row_pos-1].name);
 				getcwd(temp, 100);
 				strcat(temp, "/");
 				strcat(temp, ifile[cur.row_pos-1].name);
-				strcpy(cur.sel[selected++], temp);
+				strcpy(cur.sel_dir[selected++], temp);
 				break;
 			case '2':
 				for(int i = 0; i < selected; i++)
 				{
 					getcwd(temp, 100);
-					copy(cur.sel[i], temp);
+					copy(cur.sel_dir[i], temp, cur.sel[i]);
 				}
 				selected = 0;
 				break;
