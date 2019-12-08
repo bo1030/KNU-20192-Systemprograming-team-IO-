@@ -7,6 +7,7 @@
 #include <termio.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <curses.h>
 
 void underdock(char **, int);
 void center_left();
@@ -64,7 +65,7 @@ int main(void)
 			change = 0;
 			cur.col_pos = 0;
 			cur.row_pos = 1;
-			sc.down = LINE -3;
+			sc.down = LINES -3;
 			sc.up = 1;
 		}
 		clear();
@@ -86,13 +87,13 @@ int main(void)
 				for(int i = 0; i < selected; i++)
 				{
 					getcwd(temp, 100);
-					copy(sel[i], temp);
+					copy(cur.sel[i], temp);
 				}
 				break;
 			case '3':
 				set_crmode(1);
 				set_echomode(1);
-				move(LINE-2, 0);
+				move(LINES-2, 0);
 				addstr("target dir: ");
 				scanf("%s", temp);
 				set_crmode(0);
@@ -105,7 +106,7 @@ int main(void)
 			case '4':
 				set_crmode(1);
 				set_echomode(1);
-				move(LINE-2, 0);
+				move(LINES-2, 0);
 				addstr("rename: ");
 				scanf("%s", temp);
 				set_crmode(0);
@@ -165,7 +166,7 @@ int main(void)
 
 void underdock(char ** under, int fsize)
 {
-	move(LINES - 2, 0);
+	move(LINESS - 2, 0);
 	for (int i = 0; i < fsize; i++)
 	{
 		addstr(under[i]);
