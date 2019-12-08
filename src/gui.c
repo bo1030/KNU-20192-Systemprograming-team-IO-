@@ -53,9 +53,7 @@ int main(void)
 	tty_mode(0);
 	set_crmode(0);
 	set_echomode(2);
-	
-	initscr();
-	clear();
+	init();
 
 	while (1)
 	{
