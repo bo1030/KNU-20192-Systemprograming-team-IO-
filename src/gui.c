@@ -271,8 +271,8 @@ int isDir(char * fname)
 {
 		struct stat info;
 
-	if (stat(filename, &info) == -1)
-		perror(filename);
+	if (stat(fname, &info) == -1)
+		perror(fname);
 	else
 	{
 		if(S_ISDIR(info.st_mode))
