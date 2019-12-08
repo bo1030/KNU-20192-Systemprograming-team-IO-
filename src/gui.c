@@ -47,6 +47,7 @@ int main(void)
 {
 	char path[100] = ".";
 	int menu;
+	int i;
 	char temp[100];
 
 	set_crmode(0);
@@ -66,7 +67,6 @@ int main(void)
 		}
 		clear();
 		underdock();
-		refresh();
 		center_left();
 		move(cur.row_pos, 0);
 		addstr("*");
@@ -77,6 +77,7 @@ int main(void)
 		{
 			case '1':
 				getcwd(temp, 100);
+				strcat(temp, "/");
 				strcat(temp, ifile[cur.row_pos-1].name);
 				strcpy(cur.sel[selected++], temp);
 				break;
@@ -86,35 +87,32 @@ int main(void)
 					getcwd(temp, 100);
 					copy(cur.sel[i], temp);
 				}
+				selected = 0;
 				break;
 			case '3':
+				endwin();
 				set_crmode(1);
 				set_echomode(1);
-				move(LINES-2, 0);
-				addstr("target dir: ");
-				refresh();
-				fscanf(stdin, "%s", temp);
+				printf("target dir: ");
+				scanf("%s", temp);
+				init();
 				set_crmode(0);
 				set_echomode(2);
-				do_rename(ifile[cur.row_pos-1], temp);
-				move(LINES-1, 0);
-				addstr("							");
+				do_rename(ifile[cur.row_pos-1].name, temp);
 				refresh();
 				move(cur.row_pos, cur.col_pos);
 				change = 1;
 				break;
 			case '4':
+				endwin();
 				set_crmode(1);
 				set_echomode(1);
-				move(LINES-2, 0);
-				addstr("rename: ");
+				printf("rename: ");
 				scanf("%s", temp);
-				refresh();
+				init();
 				set_crmode(0);
 				set_echomode(2);
-				move(LINES-2, 0);
-				do_rename(ifile[cur.row_pos-1], temp);
-				addstr("							");
+				do_rename(ifile[cur.row_pos-1].name, temp);
 				refresh();
 				move(cur.row_pos, cur.col_pos);
 				change = 1;
@@ -131,11 +129,12 @@ int main(void)
 					strcat(temp, "/");
 					strcat(temp, ifile[cur.row_pos-1].name);
 					chdir(temp);
-					strncpy(path, ifile[cur.row_pos-1].name, strlen(ifile[cur.row_pos-1].name));		
+					strcpy(path, temp);		
 					change = 1;
 				}
 				else
 				{
+					strcat(ifile[cur.row_pos-1].name,"\0");
 					exec(ifile[cur.row_pos-1].name);
 				}
 				break;
@@ -180,19 +179,19 @@ void underdock()
 void center_left()
 {
 	move(0, 2);
-	addstr("name            ");
+	addstr("name                      ");
 	addstr("fsize		");
 	addstr("moditime");
 	move(1, 2);
 	
-	for(int i = sc.up-1; i <= sc.down; i++)
+	for(int i = sc.up-1; i < sc.down; i++)
 	{
 		if(i == fsize)
 			break;
 		addstr(ifile[i].name);
-		move((i+1)%(LINES-4), 18);
+		move((i+1)%(LINES-4), 28);
 		addstr(ifile[i].fsize);
-		move((i+1)%(LINES-4), 32);
+		move((i+1)%(LINES-4), 42);
 		addstr(ifile[i].moditime);
 		move((i+2)%(LINES-4), 2);
 	}
