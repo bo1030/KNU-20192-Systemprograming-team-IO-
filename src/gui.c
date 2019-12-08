@@ -51,6 +51,8 @@ int main(void)
 	char temp[100];
 
 	tty_mode(0);
+	set_crmode(0);
+	set_echomode(2);
 	initscr();
 	clear();
 	while (1)
@@ -62,11 +64,13 @@ int main(void)
 			change = 0;
 			cur.col_pos = 0;
 			cur.row_pos = 1;
+			sc.down = LINES -3;
+			sc.up = 1;
 		}
 		clear();
 		underdock(underlist, 5);
 		center_left();
-		move(cur.row_pos, cur.col_pos);
+		move(cur.row_pos, 0;
 		addstr("*");
 		refresh();
 		menu = getchar();
@@ -86,21 +90,26 @@ int main(void)
 				}
 				break;
 			case '3':
+				set_crmode(1);
+				set_echomode(1);
 				move(LINE-2, 0);
 				addstr("target dir: ");
 				scanf("%s", temp);
-				move(LINE-2, 0);
-				addstr("rename: ");
-				scanf("%s", temp);
+				set_crmode(0);
+				set_echomode(2);
 				do_rename(ifile[cur.row_pos-1], temp);
 				addstr("							");
 				move(cur.row_pos, cur.col_pos);
 				change = 1;
 				break;
 			case '4':
+				set_crmode(1);
+				set_echomode(1);
 				move(LINE-2, 0);
 				addstr("rename: ");
 				scanf("%s", temp);
+				set_crmode(0);
+				set_echomode(2);
 				do_rename(ifile[cur.row_pos-1], temp);
 				addstr("							");
 				move(cur.row_pos, cur.col_pos);
@@ -127,11 +136,20 @@ int main(void)
 				switch(menu)
 				{
 					case 72:
-						cur.row_pos--;
+						if(cur.row_pos != 1)
+						{
+							cur.row_pos--;
+							if(cur.row_pos < sc.up)
+								sc.up = cur.row_pos;
+						}
 						break;
 					case 75:
-						if(cur.row_pos )
-						cur.row_pos++;
+						if(cur.row_pos != fsize)
+						{
+							cur.row_pos++;
+							if(cur.row_pos > sc.down)
+								sc.down = cur.row_pos;
+						}
 						break;
 					case 77:
 						cur.col_pos--;
