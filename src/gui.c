@@ -160,6 +160,7 @@ int main(void)
 						break;
 				}
 			break;
+		}
 	}
 
 }
