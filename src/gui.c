@@ -16,7 +16,6 @@ void dostat(char *);
 void save_info(char *, struct stat *);
 void set_crmode(int);
 void set_echomode(int);
-void tty_mode(int);
 int isDir(char *);
 
 struct cur_info{
@@ -28,7 +27,7 @@ struct cur_info{
 struct file_info{
 	char name[100];
 	char fsize[10];
-	char moditime[20];
+	char moditime[30];
 };
 
 struct scroll_pos{
@@ -46,11 +45,10 @@ int change = 1;
 
 int main(void)
 {
-	char path[] = ".";
+	char path[100] = ".";
 	int menu;
 	char temp[100];
 
-	tty_mode(0);
 	set_crmode(0);
 	set_echomode(2);
 	init();
@@ -63,7 +61,7 @@ int main(void)
 			change = 0;
 			cur.col_pos = 0;
 			cur.row_pos = 1;
-			sc.down = LINES -3;
+			sc.down = LINES -4;
 			sc.up = 1;
 		}
 		clear();
@@ -94,11 +92,14 @@ int main(void)
 				set_echomode(1);
 				move(LINES-2, 0);
 				addstr("target dir: ");
-				scanf("%s", temp);
+				refresh();
+				fscanf(stdin, "%s", temp);
 				set_crmode(0);
 				set_echomode(2);
 				do_rename(ifile[cur.row_pos-1], temp);
+				move(LINES-1, 0);
 				addstr("							");
+				refresh();
 				move(cur.row_pos, cur.col_pos);
 				change = 1;
 				break;
@@ -108,21 +109,26 @@ int main(void)
 				move(LINES-2, 0);
 				addstr("rename: ");
 				scanf("%s", temp);
+				refresh();
 				set_crmode(0);
 				set_echomode(2);
+				move(LINES-2, 0);
 				do_rename(ifile[cur.row_pos-1], temp);
 				addstr("							");
+				refresh();
 				move(cur.row_pos, cur.col_pos);
 				change = 1;
 				break;
 			case '5':
-				tty_mode(1);
+				endwin();
+				set_crmode(1);
+                                set_echomode(1);
 				return 0;
 			case '\n':
-				if(isDir == 1)
+				if(isDir(ifile[cur.row_pos-1].name) == 1)
 				{
 					chdir(ifile[cur.row_pos-1].name);
-					strncpy(path, ifile[cur.row_pos-1].name, strlen(ifile[cur.row_pos-1].name));
+					strncpy(path, ifile[cur.row_pos-1].name, strlen(ifile[cur.row_pos-1].name));		
 					change = 1;
 				}
 				else
@@ -131,34 +137,28 @@ int main(void)
 				}
 				break;
 	
-			case 224:
-				menu = getch();
-				switch(menu)
+			case 'w':
+				if(cur.row_pos != 1)
 				{
-					case 72:
-						if(cur.row_pos != 1)
-						{
-							cur.row_pos--;
-							if(cur.row_pos < sc.up)
-								sc.up = cur.row_pos;
-						}
-						break;
-					case 75:
-						if(cur.row_pos != fsize)
-						{
-							cur.row_pos++;
-							if(cur.row_pos > sc.down)
-								sc.down = cur.row_pos;
-						}
-						break;
-					case 77:
-						cur.col_pos--;
-						break;
-					case 80:
-						cur.col_pos++;
-						break;
+					cur.row_pos--;
+					if(cur.row_pos < sc.up)
+						sc.up = cur.row_pos;
 				}
-			break;
+				break;
+			case 's':
+				if(cur.row_pos != fsize)
+				{
+					cur.row_pos++;
+					if(cur.row_pos > sc.down)
+						sc.down = cur.row_pos;
+				}
+				break;
+			case 'a':
+				cur.col_pos--;
+				break;
+			case 'd':
+				cur.col_pos++;
+				break;
 		}
 	}
 
@@ -166,7 +166,7 @@ int main(void)
 
 void underdock()
 {
-	move(LINES - 2, 0);
+	move(LINES - 3, 0);
 	for (int i = 0; i < fsize; i++)
 	{
 		addstr(underlist[i]);
@@ -177,8 +177,8 @@ void underdock()
 void center_left()
 {
 	move(0, 2);
-	addstr("name	  ");
-	addstr("fsize	  ");
+	addstr("name            ");
+	addstr("fsize		");
 	addstr("moditime");
 	move(1, 2);
 	
@@ -187,10 +187,11 @@ void center_left()
 		if(i == fsize)
 			break;
 		addstr(ifile[i].name);
-		addstr("	");
+		move((i+1)%(LINES-4), 18);
 		addstr(ifile[i].fsize);
-		addstr("	  ");
+		move((i+1)%(LINES-4), 32);
 		addstr(ifile[i].moditime);
+		move((i+2)%(LINES-4), 2);
 	}
 }
 
@@ -227,7 +228,8 @@ void save_info(char *filename, struct stat *info_p)
 
 	strcpy(ifile[fsize].name, filename);
 	sprintf(ifile[fsize].fsize, "%ld", info_p->st_size);
-	strcpy(ifile[fsize].name, 4 + ctime(&info_p->st_mtime));
+	strcpy(ifile[fsize].moditime, 4 + ctime(&info_p->st_mtime));
+	strcat(ifile[fsize].moditime, "\0");
 }
 
 void set_crmode(int mode)
@@ -258,18 +260,9 @@ void set_echomode(int mode)
 	tcsetattr(0, TCSANOW, &ttystate);
 }
 
-void tty_mode(int how)
-{
-	static struct termios original_mode;
-	if (how == 0)
-		tcgetattr(0, &original_mode);
-	else
-		tcsetattr(0, TCSANOW, &original_mode);
-}
-
 int isDir(char * fname)
 {
-		struct stat info;
+	struct stat info;
 
 	if (stat(fname, &info) == -1)
 		perror(fname);
