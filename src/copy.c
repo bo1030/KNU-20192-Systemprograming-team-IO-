@@ -12,14 +12,6 @@ int mode(char *);
 int is_read(int);
 char* exist(char*, char *);
 
-void main(int ac, char *av[])
-{
-	if(ac != 3)
-		fprintf(stderr, "usage: %s source destination\n", *av);
-	else
-		copy(av[1], exist(av[1], av[2]));
-}
-
 void copy(char * dirname, char * targetname)
 {
 	DIR *dir_ptr;

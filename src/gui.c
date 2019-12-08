@@ -53,8 +53,10 @@ int main(void)
 	tty_mode(0);
 	set_crmode(0);
 	set_echomode(2);
+	
 	initscr();
 	clear();
+
 	while (1)
 	{
 		if(change == 1)
@@ -117,7 +119,7 @@ int main(void)
 				break;
 			case '5':
 				tty_mode(1);
-				return;
+				return 0;
 			case '\n':
 				if(isDir == 1)
 				{
@@ -226,7 +228,7 @@ void save_info(char *filename, struct stat *info_p)
 	char *ctime();
 
 	strcpy(ifile[fsize].name, filename);
-	ltoa(info_p->st_size, ifile[fsize].fsize, 10);
+	sprintf(ifile[fsize].fsize, "%ld", info_p->st_size);
 	strcpy(ifile[fsize].name, 4 + ctime(&info_p->st_mtime));
 }
 
